@@ -97,7 +97,10 @@ class ISPyBClientMockup(HardwareObject):
         # to simulate wrong loginID
         if login_id not in ("idtest0", "idtest1"):
             return {
-                "status": {"code": "error", "msg": f"loginID '{login_id}' does not exist!"},
+                "status": {
+                    "code": "error",
+                    "msg": f"loginID '{login_id}' does not exist!",
+                },
                 "Proposal": None,
                 "Session": None,
             }
