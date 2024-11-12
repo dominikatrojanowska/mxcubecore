@@ -5,6 +5,7 @@ A client for ISPyB Webservices.
 import logging
 import time
 import warnings
+from typing import Optional
 
 from mxcubecore import HardwareRepository as HWR
 from mxcubecore.BaseHardwareObjects import HardwareObject
@@ -50,37 +51,55 @@ class ISPyBClientMockup(HardwareObject):
         except AttributeError:
             pass
 
-        self.__test_proposal = {
-            "status": {"code": "ok"},
-            "Person": {
-                "personId": 1,
-                "laboratoryId": 1,
-                "login": None,
-                "familyName": "operator on IDTESTeh1",
-            },
-            "Proposal": {
-                "code": "idtest",
-                "title": "operator on IDTESTeh1",
-                "personId": 1,
-                "number": "0",
-                "proposalId": 1,
-                "type": "MX",
-            },
-            "Session": [
-                {
-                    "scheduled": 0,
-                    "startDate": "2013-06-11 00:00:00",
-                    "endDate": "2023-06-12 07:59:59",
-                    "beamlineName": self.beamline_name,
-                    "timeStamp": "2013-06-11 09:40:36",
-                    "comments": "Session created by the BCM",
-                    "sessionId": 34591,
-                    "proposalId": 1,
-                    "nbShifts": 3,
-                }
-            ],
-            "Laboratory": {"laboratoryId": 1, "name": "TEST eh1"},
-        }
+    # trying something super simple
+    @property
+    def prop1(self):
+        return self.__test_proposal
+
+    @prop1.setter
+    def prop1(self, value):
+        logging.getLogger("HWR").info("3-----------> overwriting proposal for login %s" % value)
+        self.__test_proposal = {1: value}
+
+    # if above seems fine let's try something more complex and accurate
+    #  the finaly goal it to make it private renaming prop1 -> __test_proposal_property
+    # @property
+    # def prop1(self):
+    #     return self.__test_proposal
+    #
+    # @prop1.setter
+    # def prop1(self, user):
+    #     self.__test_proposal = {
+    #         "status": {"code": "ok"},
+    #         "Person": {
+    #             "personId": user[-1],
+    #             "laboratoryId": 1,
+    #             "login": None,
+    #             "familyName": "operator on IDTESTeh1",
+    #         },
+    #         "Proposal": {
+    #             "code": "idtest",
+    #             "title": "operator on IDTESTeh1",
+    #             "personId": user[-1],
+    #             "number": "0",
+    #             "proposalId": 1,
+    #             "type": "MX",
+    #         },
+    #         "Session": [
+    #             {
+    #                 "scheduled": 0,
+    #                 "startDate": "2013-06-11 00:00:00",
+    #                 "endDate": "2023-06-12 07:59:59",
+    #                 "beamlineName": self.beamline_name,
+    #                 "timeStamp": "2013-06-11 09:40:36",
+    #                 "comments": "Session created by the BCM",
+    #                 "sessionId": 34591,
+    #                 "proposalId": 1,
+    #                 "nbShifts": 3,
+    #             }
+    #         ],
+    #         "Laboratory": {"laboratoryId": 1, "name": "TEST eh1"},
+    #     }
 
     @property
     def loginType(self):
@@ -95,6 +114,8 @@ class ISPyBClientMockup(HardwareObject):
 
     def login(self, login_id, psd, ldap_connection=None, create_session=True):
         # to simulate wrong loginID
+        logging.getLogger("HWR").info("1-----------> login %s" % login_id)
+
         if login_id not in ("idtest0", "idtest1"):
             return {
                 "status": {
@@ -122,6 +143,10 @@ class ISPyBClientMockup(HardwareObject):
         new_session = False
         if psd == "nosession":
             new_session = True
+        logging.getLogger("HWR").info("2-----------> login %s" % login_id)
+        self.prop1 = "abc"
+        logging.getLogger("HWR").info("4-----------> self.prop1 %s" % self.prop1)
+
         prop = self.get_proposal(login_id, 9999)
 
         return {
@@ -230,10 +255,11 @@ class ISPyBClientMockup(HardwareObject):
         :returns: The dict (Proposal, Person, Laboratory, Sessions, Status).
         :rtype: dict
         """
-        return self.__test_proposal
+        return self.prop1
 
     def get_proposals_by_user(self, user_name):
-        return [self.__test_proposal]
+        self.prop1 = user_name
+        return [self.prop1]
 
     def get_session_local_contact(self, session_id):
         return {
