@@ -29,6 +29,7 @@ from mxcubecore.HardwareObjects.GenericDiffractometer import (
     GenericDiffractometer,
     PhaseEnum,
 )
+from mxcubecore.HardwareObjects.sample_centring import CentringMotor
 
 
 class DiffractometerMockup(GenericDiffractometer):
@@ -121,6 +122,8 @@ class DiffractometerMockup(GenericDiffractometer):
         self.connect(
             self.motor_hwobj_dict["sampy"], "valueChanged", self.sampy_motor_moved
         )
+        self.phiMotor = self.get_object_by_role("phi")
+        self.centringPhi = CentringMotor(self.phiMotor, direction=-1)
 
     def execute_server_task(self, method, timeout=30, *args):
         return
