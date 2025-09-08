@@ -84,20 +84,19 @@ class AbstractXRFSpectrum(HardwareObject):
         """Start the procedure. Called by the queue_model.
 
         Args:
-            integration_time: Inregration time [s].
-            data_dir: Directory to save the data (full path).
-            archive_dir: Directory to save the archive data (full path).
-            prefix: File prefix
-            session_id: Session ID number (from ISpyB)
-            blsample_id: Sample ID number (from ISpyB)
-            cpos: The centred position motors and their values.
+            integration_time (float): Inregration time [s].
+            data_dir (str): Directory to save the data (full path).
+            archive_dir (str): Directory to save the archive data (full path).
+            prefix (str): File prefix.
+            session_id (int): Session ID number (from ISpyB).
+            blsample_id (int): Sample ID number (from ISpyB).
+            cpos (dict): The centred position motors and their values.
         """
         self.cpos = cpos
         self.spectrum_info_dict = {"sessionId": session_id, "blSampleId": blsample_id}
         integration_time = integration_time or self.default_integration_time
         self.spectrum_info_dict["exposureTime"] = integration_time
         self.spectrum_info_dict["filename"] = ""
-
         # Create the data and the archive directory (if needed) and files
         if data_dir:
             if not self.create_directory(data_dir):
@@ -135,8 +134,8 @@ class AbstractXRFSpectrum(HardwareObject):
         """Do the acquisition.
 
         Args:
-            integration_time: MCA integration time [s].
-            filename: Data file (full path).
+            integration_time (float): MCA integration time [s].
+            filename (str): Data file (full path).
         Raises:
             RuntimeError: Cannot acquire data.
         """
@@ -166,7 +165,7 @@ class AbstractXRFSpectrum(HardwareObject):
     def create_directory(self, directory: str) -> bool:
         """Create a directory, if needed.
         Args:
-            directory: Directory to save the data (full path).
+            directory (str): Directory to save the data (full path).
         Returns:
            ``True`` if directory created or already exists, ``False`` if error.
         """
